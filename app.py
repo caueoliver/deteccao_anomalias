@@ -89,17 +89,16 @@ try:
 except Exception as e:
     st.error(f"Erro ao baixar modelos: {e}")
 
-# --- 4. FUNÇÃO DE VERIFICAÇÃO (ATUALIZADA) ---
+# --- FUNÇÃO DE VERIFICAÇÃO ---
 def check_models():
     missing = []
-    # Agora usa as mesmas variáveis globais definidas lá em cima
     if not os.path.exists(PATH_GRADCAM): 
         missing.append(f"Grad-CAM ({PATH_GRADCAM})")
     if not os.path.exists(PATH_PIX2PIX): 
         missing.append(f"Pix2Pix ({PATH_PIX2PIX})")
     return missing
 
-# --- 5. INTERFACE DO STREAMLIT ---
+# --- INTERFACE DO STREAMLIT ---
 st.markdown("""
     <style>
     .stApp { background-color: #f0f2f6; }
