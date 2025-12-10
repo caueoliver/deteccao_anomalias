@@ -6,3 +6,7 @@ Pillow
 scikit-image
 opencv-python
 matplotlib
+pandas
+opencv-python-headless 
+torch --index-url https://download.pytorch.org/whl/cpu
+torchvision --index-url https://download.pytorch.org/whl/cpu

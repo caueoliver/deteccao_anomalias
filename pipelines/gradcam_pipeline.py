@@ -5,26 +5,26 @@ from PIL import Image
 from torchvision import models, transforms
 import cv2
 
-# Variável global para cache do modelo
+# variável global para cache do modelo
 _predictor = None
 
 class GradCamPredictor:
     def __init__(self, weights_path: str):
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         
-        # 1. Carregar a ResNet18
+        # carregar a ResNet18
         self.model = models.resnet18(weights=None)
         # Ajustar a última camada para 2 classes (igual ao treino)
         self.model.fc = torch.nn.Linear(self.model.fc.in_features, 2)
         
-        # 2. Carregar os pesos salvos
+        # carregar os pesos salvos
         # map_location garante que funcione em qualquer PC
         state = torch.load(weights_path, map_location=self.device)
         self.model.load_state_dict(state)
         self.model.to(self.device)
         self.model.eval()
 
-        # 3. Preparar os Hooks para o Grad-CAM
+        # preparar os Hooks para o Grad-CAM
         self.target_layer = self.model.layer4[-1] # Última camada convolucional
         self.gradients = None
         self.activations = None
@@ -38,7 +38,7 @@ class GradCamPredictor:
         self.target_layer.register_full_backward_hook(backward_hook)
         self.target_layer.register_forward_hook(forward_hook)
 
-        # 4. Transformações (as mesmas do treino)
+        # transformações
         self.tf = transforms.Compose([
             transforms.Resize((224, 224)),
             transforms.ToTensor(),
@@ -46,22 +46,22 @@ class GradCamPredictor:
         ])
 
     def infer(self, pil_img: Image.Image) -> dict:
-        # Preprocessamento
+        # preprocessamento
         img_tensor = self.tf(pil_img.convert("RGB")).unsqueeze(0).to(self.device)
         
-        # Zerar gradientes anteriores
+        # zerar gradientes anteriores
         self.model.zero_grad()
         
-        # Forward
+        # forward
         output = self.model(img_tensor)
         probs = F.softmax(output, dim=1)
         pred_idx = output.argmax(dim=1).item()
         
-        # Backward (Para gerar o mapa)
+        # backward (Para gerar o mapa)
         score = output[0, pred_idx]
         score.backward()
         
-        # Gerar Mapa
+        # gerar mapa
         grads = self.gradients.cpu().data.numpy()[0]
         fmap = self.activations.cpu().data.numpy()[0]
         
@@ -74,7 +74,7 @@ class GradCamPredictor:
         cam = cam / (cam.max() + 1e-8)
         cam = cv2.resize(cam, (224, 224))
         
-        # Preparar visualização
+        # preparar visualização
         img_np = np.array(pil_img.convert("RGB").resize((224, 224))).astype(np.float32) / 255.0
         heatmap_colored = cv2.applyColorMap(np.uint8(255 * cam), cv2.COLORMAP_JET)
         heatmap_colored = cv2.cvtColor(heatmap_colored, cv2.COLOR_BGR2RGB) / 255.0
@@ -82,13 +82,13 @@ class GradCamPredictor:
         overlay = 0.6 * img_np + 0.4 * heatmap_colored
         overlay = np.clip(overlay, 0, 1)
         
-        # Converter para PIL para exibir no App
+        # converter para PIL para exibir no App
         overlay_pil = Image.fromarray((overlay * 255).astype(np.uint8))
         heatmap_pil = Image.fromarray((heatmap_colored * 255).astype(np.uint8))
 
         return {
-            "img1": overlay_pil,   # Imagem com sobreposição
-            "img2": heatmap_pil,   # Apenas o calor
+            "img1": overlay_pil,   # imagem com sobreposição
+            "img2": heatmap_pil,   # apenas o calor
             "metrics": {
                 "Predição": "Doente" if pred_idx == 1 else "Saudável",
                 "Confiança": f"{probs[0, pred_idx].item()*100:.2f}%"
