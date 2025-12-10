@@ -24,42 +24,51 @@ st.set_page_config(
 # --- ESTILO CSS ---
 st.markdown("""
     <style>
+    [data-testid="stAppViewContainer"] {
+        background-color: #0E1117 !important;
+        color: #FAFAFA !important;
+    }
+    
     .main {
-        background-color: #0E1117; 
-        color: #FAFAFA; /* Texto geral claro */
+        background-color: #0E1117 !important;
     }
 
+    
+    /* Título Principal - Branco */
     h1 {
-        color: #4CAF50; 
+        color: #FFFFFF !important; 
         font-family: 'Helvetica Neue', sans-serif;
     }
 
-    /* Subtítulos em verde claro */
     h3 {
-        color: #81C784;
-        border-bottom: 2px solid #4CAF50;
+        color: #E0E0E0 !important;
+        border-bottom: 2px solid #4CAF50; /* Mantive a linha verde sutil, se quiser tirar, apague */
         padding-bottom: 10px;
     }
 
+    p, span, label, div, li {
+        color: #FAFAFA !important;
+    }
+
     .stButton>button {
-        background-color: #2E7D32;
-        color: white;
+        background-color: #2E7D32 !important;
+        color: white !important;
         border-radius: 8px;
         height: 50px;
         font-weight: bold;
         border: none;
     }
     .stButton>button:hover {
-        background-color: #1B5E20;
+        background-color: #1B5E20 !important;
     }
 
     .metric-card {
-        background-color: #262730;
+        background-color: #262730 !important; /* Fundo cinza chumbo */
         padding: 15px;
         border-radius: 10px;
         box-shadow: 0 4px 6px rgba(0,0,0,0.3);
         text-align: center;
-        border: 1px solid #4CAF50; /* Opcional: borda fina verde para destaque */
+        border: 1px solid #444; /* Borda discreta */
     }
     </style>
     """, unsafe_allow_html=True)
