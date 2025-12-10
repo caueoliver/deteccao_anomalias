@@ -25,19 +25,24 @@ st.set_page_config(
 st.markdown("""
     <style>
     .main {
-        background-color: #f8f9fa;
+        background-color: #0E1117; 
+        color: #FAFAFA; /* Texto geral claro */
     }
+
     h1 {
-        color: #2e7d32;
+        color: #4CAF50; 
         font-family: 'Helvetica Neue', sans-serif;
     }
+
+    /* Subtítulos em verde claro */
     h3 {
-        color: #1b5e20;
-        border-bottom: 2px solid #a5d6a7;
+        color: #81C784;
+        border-bottom: 2px solid #4CAF50;
         padding-bottom: 10px;
     }
+
     .stButton>button {
-        background-color: #2e7d32;
+        background-color: #2E7D32;
         color: white;
         border-radius: 8px;
         height: 50px;
@@ -45,17 +50,19 @@ st.markdown("""
         border: none;
     }
     .stButton>button:hover {
-        background-color: #1b5e20;
+        background-color: #1B5E20;
     }
+
     .metric-card {
-        background-color: white;
+        background-color: #262730;
         padding: 15px;
         border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
         text-align: center;
+        border: 1px solid #4CAF50; /* Opcional: borda fina verde para destaque */
     }
     </style>
-""", unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
 
 PATH_GRADCAM = 'weights/gradcam_model_state_dict.pth'
 PATH_PIX2PIX = 'weights/pix2pix_netG_ts.pt'
