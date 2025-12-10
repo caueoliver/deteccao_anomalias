@@ -59,7 +59,7 @@ st.markdown("""
 PATH_GRADCAM = 'weights/gradcam_model_state_dict.pth'
 PATH_PIX2PIX = 'weights/pix2pix_netG_ts.pt'
 
-# IDs do Google Drive (Cole os seus IDs reais aqui)
+# IDs do Google Drive
 GDRIVE_ID_GRADCAM = '1hWxOArHhUsiS-Dv-9tZdraZhRK6i0iaV'
 GDRIVE_ID_PIX2PIX = '1MWMTTIKhuhcNYXMsGborWoWROhwKHEeF'
 
