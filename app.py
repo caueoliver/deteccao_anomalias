@@ -56,30 +56,71 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-PATH_GRADCAM = os.path.join("weights", "gradcam_model_state_dict.pth")
-PATH_PIX2PIX = os.path.join("weights", "pix2pix_netG_ts.pt")
+PATH_GRADCAM = 'weights/gradcam_model_state_dict.pth'
+PATH_PIX2PIX = 'weights/pix2pix_netG_ts.pt'
 
+# IDs do Google Drive (Cole os seus IDs reais aqui)
+GDRIVE_ID_GRADCAM = '1hWxOArHhUsiS-Dv-9tZdraZhRK6i0iaV'
+GDRIVE_ID_PIX2PIX = '1MWMTTIKhuhcNYXMsGborWoWROhwKHEeF'
+
+# --- FUNÇÃO DE DOWNLOAD ---
+@st.cache_resource
+def download_model_weights():
+    # cria a pasta weights se ela não existir
+    if not os.path.exists('weights'):
+        os.makedirs('weights')
+
+    # Download do GradCAM se não existir
+    if not os.path.exists(PATH_GRADCAM):
+        with st.spinner('Baixando modelo Grad-CAM do Google Drive... (Isso acontece apenas uma vez)'):
+            url = f'https://drive.google.com/uc?id={GDRIVE_ID_GRADCAM}'
+            gdown.download(url, PATH_GRADCAM, quiet=False)
+
+    # Download do Pix2Pix se não existir
+    if not os.path.exists(PATH_PIX2PIX):
+        with st.spinner('Baixando modelo Pix2Pix do Google Drive...'):
+            url = f'https://drive.google.com/uc?id={GDRIVE_ID_PIX2PIX}'
+            gdown.download(url, PATH_PIX2PIX, quiet=False)
+
+# --- CHAMADA INICIAL DO DOWNLOAD ---
+# Tenta baixar tudo antes de continuar
+try:
+    download_model_weights()
+except Exception as e:
+    st.error(f"Erro ao baixar modelos: {e}")
+
+# --- 4. FUNÇÃO DE VERIFICAÇÃO (ATUALIZADA) ---
 def check_models():
     missing = []
-    if not os.path.exists(PATH_GRADCAM): missing.append("Grad-CAM (weights/gradcam_model_state_dict.pth)")
-    if not os.path.exists(PATH_PIX2PIX): missing.append("Pix2Pix (weights/pix2pix_netG_ts.pt)")
+    # Agora usa as mesmas variáveis globais definidas lá em cima
+    if not os.path.exists(PATH_GRADCAM): 
+        missing.append(f"Grad-CAM ({PATH_GRADCAM})")
+    if not os.path.exists(PATH_PIX2PIX): 
+        missing.append(f"Pix2Pix ({PATH_PIX2PIX})")
     return missing
 
+# --- 5. INTERFACE DO STREAMLIT ---
+st.markdown("""
+    <style>
+    .stApp { background-color: #f0f2f6; }
+    </style>
+""", unsafe_allow_html=True)
+
 with st.sidebar:
-    st.image("https://cdn-icons-png.flaticon.com/512/628/628283.png", width=80) # Ícone genérico de planta
+    st.image("https://cdn-icons-png.flaticon.com/512/628/628283.png", width=80)
     st.title("Painel de Controle")
     st.markdown("---")
-    
     uploaded_file = st.file_uploader("📂 Carregar Folha (JPG/PNG)", type=["jpg", "png", "jpeg"])
-    
 
 st.title("🌿 Diagnóstico Inteligente")
 st.markdown("Sistema de detecção de patologias em plantas utilizando **Visão Computacional** e **IA Generativa**.")
 
+# Verifica se o download funcionou
 missing_models = check_models()
 if missing_models:
     st.error("⚠️ ARQUIVOS DE MODELO NÃO ENCONTRADOS!")
-    st.write("Por favor, certifique-se de que os seguintes arquivos estão na pasta `weights/`:")
+    st.warning("O download automático falhou. Verifique se os IDs do Google Drive estão corretos e se os arquivos estão como 'Público/Qualquer pessoa com o link'.")
+    st.write("Arquivos faltando:")
     for m in missing_models:
         st.code(m)
     st.stop()
